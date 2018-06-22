@@ -97,3 +97,31 @@ button.outline {
   background-size: cover;
   color: #fff;
 }
+.slick-next:before {
+  color: #007eff;
+}
+
+.slick-prev:before {
+  color: #007eff;
+}
+
+.showme {
+  display: none;
+}
+.showhim:hover .showme {
+  display: block;
+}
+
+.pluslink a {
+  text-decoration: none;
+  font-weight: bold;
+  background-color: #ddd;
+  color: #666;
+}
+
+.pluslink a:hover {
+  text-decoration: none;
+  font-weight: bold;
+  background-color: #ddd;
+  color: #666;
+}

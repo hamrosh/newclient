@@ -35,8 +35,9 @@ class HomeHeader extends Component {
           this.props.updateUser({
             loggedIn: false,
             emailid: null,
-            fullname: null
+            fullName: null
           });
+          this.props.setEmail('', '', '');
         }
       })
       .catch(error => {
@@ -73,7 +74,7 @@ class HomeHeader extends Component {
             {loggedIn ? (
               <Nav className="ml-auto" navbar>
                 <NavItem>
-                  Welcome {this.props.fullname}
+                  Welcome {this.props.fullName}
                   <Link
                     to="#"
                     className="btn btn-link text-secondary"

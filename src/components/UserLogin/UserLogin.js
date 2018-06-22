@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { ApolloConsumer } from 'react-apollo';
-import { USER_EXISTS } from './gql';
+
 import { Formik, Form, Field } from 'formik';
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
@@ -65,8 +64,14 @@ class UserLogin extends Component {
                       this.props.updateUser({
                         loggedIn: true,
                         emailid: response.data.emailid,
-                        fullname: response.data.fullname
+                        fullName: response.data.fullName
                       });
+
+                      this.props.setEmail(
+                        response.data.emailid,
+                        '33',
+                        response.data.fullName
+                      );
 
                       this.setState({
                         redirectTo: '/'

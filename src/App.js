@@ -15,30 +15,11 @@ import HomePage from './components/HomePage/HomePage';
 import UserLogin from './components/UserLogin/UserLogin';
 import EmailConfirmation from './components/EmailConfirmation/EmailConfirmation';
 import EmailActivationLink from './components/EmailActivationLink/EmailActivationLink';
+import CourseContent from './components/CourseContent/CourseContent';
+import { Provider, Consumer } from './MyContext';
 const client = new ApolloClient({
-  uri: 'http://localhost:5000/graphql'
+  uri: '/graphql'
 });
-
-export const MyContext = React.createContext();
-
-class MyProvider extends Component {
-  state = {
-    isLoggedIn: true
-  };
-  render() {
-    return (
-      <MyContext.Provider
-        value={{
-          state: this.state,
-          Login: () => this.setState({ isLoggedIn: true }),
-          Logout: () => this.setState({ isLoggedIn: false })
-        }}
-      >
-        {this.props.children}
-      </MyContext.Provider>
-    );
-  }
-}
 
 class App extends Component {
   constructor() {
@@ -46,7 +27,7 @@ class App extends Component {
     this.state = {
       loggedIn: false,
       emailid: null,
-      fullname: null
+      fullName: null
     };
 
     this.getUser = this.getUser.bind(this);
@@ -72,14 +53,14 @@ class App extends Component {
         this.setState({
           loggedIn: true,
           emailid: response.data.user.emailid,
-          fullname: response.data.user.fullname
+          fullName: response.data.user.fullName
         });
       } else {
         console.log('Get user: no user');
         this.setState({
           loggedIn: false,
           emailid: null,
-          fullname: null
+          fullName: null
         });
       }
     });
@@ -87,44 +68,69 @@ class App extends Component {
 
   render() {
     return (
-      <MyProvider>
-        <ApolloProvider client={client}>
-          <Router>
-            <React.Fragment>
-              <HomeHeader
-                updateUser={this.updateUser}
-                loggedIn={this.state.loggedIn}
-                fullname={this.state.fullname}
-              />
-              <br />
-              <div className="container">
-                <Route exact strict path="/" component={HomePage} />
-                <Route exact strict path="/Signup" component={UserSignUp} />
-                <Route
-                  exact
-                  strict
-                  path="/Login"
-                  render={() => <UserLogin updateUser={this.updateUser} />}
-                />
-                <Route
-                  exact
-                  strict
-                  path="/EmailConfirmation"
-                  render={() => (
-                    <EmailConfirmation email={this.state.emailid} />
-                  )}
-                />
-                <Route
-                  exact
-                  strict
-                  path="/EmailActivation/:id"
-                  render={props => <EmailActivationLink {...props} />}
-                />
-              </div>
-            </React.Fragment>
-          </Router>
-        </ApolloProvider>
-      </MyProvider>
+      <Provider>
+        <Consumer>
+          {value => {
+            console.log(value);
+            const { setEmail } = value;
+            return (
+              <ApolloProvider client={client}>
+                <Router>
+                  <React.Fragment>
+                    <HomeHeader
+                      updateUser={this.updateUser}
+                      loggedIn={this.state.loggedIn}
+                      fullName={this.state.fullName}
+                      setEmail={setEmail}
+                    />
+                    <br />
+                    <div className="container">
+                      <Route exact strict path="/" component={HomePage} />
+                      <Route
+                        exact
+                        strict
+                        path="/Signup"
+                        component={UserSignUp}
+                      />
+                      <Route
+                        exact
+                        strict
+                        path="/Login"
+                        render={() => (
+                          <UserLogin
+                            setEmail={setEmail}
+                            updateUser={this.updateUser}
+                          />
+                        )}
+                      />
+                      <Route
+                        exact
+                        strict
+                        path="/EmailConfirmation"
+                        render={() => (
+                          <EmailConfirmation email={this.state.emailid} />
+                        )}
+                      />
+                      <Route
+                        exact
+                        strict
+                        path="/EmailActivation/:id"
+                        render={props => <EmailActivationLink {...props} />}
+                      />
+                      <Route
+                        exact
+                        strict
+                        path="/Courses/:routeURL"
+                        render={props => <CourseContent {...props} />}
+                      />
+                    </div>
+                  </React.Fragment>
+                </Router>
+              </ApolloProvider>
+            );
+          }}
+        </Consumer>;
+      </Provider>
     );
   }
 }
